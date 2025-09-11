@@ -44,6 +44,7 @@
 #include "internal/fx/musefxresolver.h"
 
 #include "internal/synthesizers/fluidsynth/fluidresolver.h"
+#include "internal/synthesizers/wavsynth/wavresolver.h" //MODIFICATION
 #include "internal/synthesizers/synthresolver.h"
 #include "internal/synthesizers/soundfontrepository.h"
 
@@ -169,6 +170,7 @@ void AudioWorker::th_main(const OutputSpec& outputSpec, const AudioWorkerConfig&
 
     m_fxResolver->registerResolver(AudioFxType::MuseFx, std::make_shared<MuseFxResolver>());
     m_synthResolver->registerResolver(AudioSourceType::Fluid, std::make_shared<FluidResolver>());
+    m_synthResolver->registerResolver(AudioSourceType::WavFile, std::make_shared<WavResolver>()); //MODIFICATION
 
     m_audioBuffer->init(outputSpec.audioChannelCount);
 

@@ -44,6 +44,7 @@ using namespace muse::audio::synth;
 static const QString VST_MENU_ITEM_ID("VST3");
 static const QString SOUNDFONTS_MENU_ITEM_ID("SoundFonts");
 static const QString MUSE_MENU_ITEM_ID("MuseSounds");
+static const QString WAV_MENU_ITEM_ID("Wav"); // MODIFICATION
 static const QString GET_MORE_SOUNDS_ID("getMoreSounds");
 
 static const muse::String MS_BASIC_SOUNDFONT_NAME(u"MS Basic");
@@ -52,6 +53,7 @@ static std::unordered_map<AudioResourceType, QString> AUDIO_RESOURCE_TYPE_TO_STR
     { AudioResourceType::FluidSoundfont, SOUNDFONTS_MENU_ITEM_ID },
     { AudioResourceType::VstPlugin, VST_MENU_ITEM_ID },
     { AudioResourceType::MuseSamplerSoundPack, MUSE_MENU_ITEM_ID },
+    { AudioResourceType::WavFile, WAV_MENU_ITEM_ID }, //MODIFICATION
 };
 
 static QString makeMenuResourceItemId(AudioResourceType type, const QString& resourceId)
@@ -111,6 +113,13 @@ void InputResourceItem::requestAvailableResources()
         auto sfResourcesSearch = m_availableResourceMap.find(AudioResourceType::FluidSoundfont);
         if (sfResourcesSearch != m_availableResourceMap.end()) {
             result << buildSoundFontsMenuItem(sfResourcesSearch->second);
+        }
+
+        // MODIFICATION
+        auto wavResourcesSearch = m_availableResourceMap.find(AudioResourceType::WavFile);
+        if (wavResourcesSearch != m_availableResourceMap.end()) {
+            result << buildWavMenuItem(wavResourcesSearch->second);
+            result << buildSeparator();
         }
 
         result << buildSeparator();
@@ -298,6 +307,44 @@ QVariantMap InputResourceItem::buildMuseMenuItem(const ResourceByVendorMap& reso
                          m_currentInputParams.resourceMeta.type == AudioResourceType::MuseSamplerSoundPack,
                          subItemsByType);
 }
+
+// MODIFICATION
+QVariantMap InputResourceItem::buildWavMenuItem(const ResourceByVendorMap& resourcesByVendor) const { //MODIFICATION 
+
+    QVariantList subItemsByType;
+
+    for (const auto& pair : resourcesByVendor) {
+        QVariantList subItemsByVendor;
+
+        for (const AudioResourceMeta& resourceMeta : pair.second) {
+            QString resourceId = QString::fromStdString(resourceMeta.id);
+            subItemsByVendor << buildMenuItem(makeMenuResourceItemId(resourceMeta.type, resourceId),
+                resourceId,
+                m_currentInputParams.resourceMeta.id == resourceMeta.id);
+        }
+
+        QString vendor = QString::fromStdString(pair.first);
+        subItemsByType << buildMenuItem(vendor,
+            vendor,
+            m_currentInputParams.resourceMeta.vendor == pair.first,
+            subItemsByVendor);
+    }
+
+    return buildMenuItem(WAV_MENU_ITEM_ID,
+        WAV_MENU_ITEM_ID,
+        m_currentInputParams.resourceMeta.type == AudioResourceType::WavFile,
+        subItemsByType);
+}
+    //QVariantList vendor;
+
+    //vendor << makeMenuResourceItemId(AudioResourceType::WavFile, "paul");
+    //
+    //return buildMenuItem(WAV_MENU_ITEM_ID,
+    //    WAV_MENU_ITEM_ID,
+    //    m_currentInputParams.resourceMeta.type == AudioResourceType::WavFile,
+    //    vendor
+    //);
+
 
 QVariantMap InputResourceItem::buildVstMenuItem(const ResourceByVendorMap& resourcesByVendor) const
 {

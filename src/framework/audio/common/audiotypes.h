@@ -144,6 +144,7 @@ enum class AudioResourceType {
     MuseSamplerSoundPack,
     Lv2Plugin,
     AudioUnit,
+    WavFile, //MODIFICATIOn
 };
 
 struct AudioResourceMeta {
@@ -311,7 +312,8 @@ enum class AudioSourceType {
     Undefined = -1,
     Fluid,
     Vsti,
-    MuseSampler
+    MuseSampler,
+    WavFile, //MODIFICATION
 };
 
 inline AudioSourceType sourceTypeFromResourceType(AudioResourceType type)
@@ -320,6 +322,7 @@ inline AudioSourceType sourceTypeFromResourceType(AudioResourceType type)
     case AudioResourceType::FluidSoundfont: return AudioSourceType::Fluid;
     case AudioResourceType::VstPlugin: return AudioSourceType::Vsti;
     case AudioResourceType::MuseSamplerSoundPack: return AudioSourceType::MuseSampler;
+    case AudioResourceType::WavFile: return AudioSourceType::WavFile;
     case AudioResourceType::AudioUnit:
     case AudioResourceType::Lv2Plugin:
     case AudioResourceType::MusePlugin:

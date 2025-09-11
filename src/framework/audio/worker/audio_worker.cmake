@@ -127,6 +127,29 @@ set(AUDIO_WORKER_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/fluidsynth/fluidresolver.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/fluidsynth/fluidsoundfontparser.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/fluidsynth/fluidsoundfontparser.cpp
+
+    ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/dectalk/cmudict.h # MODIFICATION
+
+    ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/dectalk/dectalkwavgenerator.h # MODIFICATION
+    ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/dectalk/dectalkwavgenerator.cpp # MODIFICATION
+
+    ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/wavfile.h # MODIFICATION
+    ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/wavfile.cpp # MODIFICATION
+
+    ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/wavgenerator.h # MODIFICATION
+    ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/wavgenerator.cpp # MODIFICATION
+
+    ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/wavresolver.h # MODIFICATION
+    ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/wavresolver.cpp # MODIFICATION
+
+    ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/wavsynth.h # MODIFICATION
+    ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/wavsynth.cpp # MODIFICATION
+)
+
+
+configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/dectalk/cmudict-mod" 
+    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cmudict-mod" COPYONLY
 )
 
 if (ARCH_IS_X86_64)

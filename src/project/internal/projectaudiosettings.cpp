@@ -38,7 +38,8 @@ static const std::map<AudioSourceType, QString> SOURCE_TYPE_MAP = {
     { AudioSourceType::Undefined, "undefined" },
     { AudioSourceType::MuseSampler, "musesampler" },
     { AudioSourceType::Fluid, "fluid" },
-    { AudioSourceType::Vsti, "vsti" }
+    { AudioSourceType::Vsti, "vsti" },
+    { AudioSourceType::WavFile, "wav_file" }, // MODIFICATION
 };
 
 static const std::map<AudioResourceType, QString> RESOURCE_TYPE_MAP = {
@@ -47,6 +48,7 @@ static const std::map<AudioResourceType, QString> RESOURCE_TYPE_MAP = {
     { AudioResourceType::FluidSoundfont, "fluid_soundfont" },
     { AudioResourceType::VstPlugin, "vst_plugin" },
     { AudioResourceType::MusePlugin, "muse_plugin" },
+    { AudioResourceType::WavFile, "wav_file" }, // MODIFICATION
 };
 
 static void doCompatibilityConversions(AudioResourceMeta& meta)
