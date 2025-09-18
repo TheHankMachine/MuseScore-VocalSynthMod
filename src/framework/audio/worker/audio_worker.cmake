@@ -147,10 +147,10 @@ set(AUDIO_WORKER_SRC
 )
 
 
-configure_file(
-    "${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/dectalk/cmudict-mod" 
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cmudict-mod" COPYONLY
-)
+#configure_file(
+#    "${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/dectalk/cmudict-mod" 
+#    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cmudict-mod" COPYONLY
+#)
 
 if (ARCH_IS_X86_64)
     set(MODULE_SRC ${MODULE_SRC}
