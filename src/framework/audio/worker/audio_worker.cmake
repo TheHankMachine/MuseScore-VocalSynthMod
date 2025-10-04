@@ -146,10 +146,16 @@ set(AUDIO_WORKER_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/wavsynth.cpp # MODIFICATION
 )
 
+file(
+    COPY
+    "${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/dectalk/bin/"
+    DESTINATION
+    "C:/Program Files/MuseScore/bin/dectalk"    # 
+)
 
 #configure_file(
 #    "${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/wavsynth/dectalk/cmudict-mod" 
-#    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cmudict-mod" COPYONLY
+#    "CMAKE_BINARY_DIR" COPYONLY
 #)
 
 if (ARCH_IS_X86_64)
