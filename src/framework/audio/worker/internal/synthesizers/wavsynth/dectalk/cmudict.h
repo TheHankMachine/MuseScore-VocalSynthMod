@@ -15,8 +15,6 @@ public:
 
         std::transform(word.begin(), word.end(), word.begin(), ::toupper);
 
-
-
         int l = 0;
         int r = entries.size() - 1;
 

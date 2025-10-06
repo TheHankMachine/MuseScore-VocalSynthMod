@@ -17,10 +17,10 @@ public:
 
 private:
 
-	void initCommand();
-	void quantizeNotes(std::vector<DECTalkNote> notes);
+	//void initCommand();
+	void quantizeNotesToFile(std::vector<DECTalkNote>& notes, std::string& filepath);
 
-	std::string m_command = "";
+	//std::string m_command = "";
 	std::string m_name;
 
 };

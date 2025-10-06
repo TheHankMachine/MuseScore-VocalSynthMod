@@ -61,11 +61,11 @@ std::string seperatePhonemesWithSpace(std::string word) {
 		"DH", "CH", "JH", "DF", "SH", "ZH", "DX", "TX",
 		"L", "R", "W", "M", "N", "F", "V", "S",
 		"Z", "K", "G", "P", "B", "T", "D", "Q",
-		"_"
+		"_", "|"
 	};
 
 	std::transform(word.begin(), word.end(), word.begin(), ::toupper);
-	word = std::regex_replace(word, std::regex("[^A-Z_]"), "");
+	word = std::regex_replace(word, std::regex("[^A-Z_|#]"), "");
 
 	std::string result = "";
 	std::string remaining = word;
@@ -150,13 +150,19 @@ std::vector<DECTalkNote> getNotesFromScore(const mpe::PlaybackData& playbackData
 						}
 
 						if (!priorHyphenated) {
-							note.lyric = lyricEvent.text.toStdString();
+							if (phonemicMode){
+								note.lyric = "#" + lyricEvent.text.toStdString();
+							}
+							else {
+								note.lyric = lyricEvent.text.toStdString();
+							}
+							
 							lastWordStartIndex = notes.size();
 						}
 						else {
 
 							if (phonemicMode) {
-								notes[lastWordStartIndex].lyric += " | " + lyricEvent.text.toStdString();
+								notes[lastWordStartIndex].lyric += "|" + lyricEvent.text.toStdString();
 							}
 							else {
 								notes[lastWordStartIndex].lyric += lyricEvent.text.toStdString();
@@ -211,9 +217,10 @@ void spreadLyrics(std::vector<DECTalkNote>& notes) {
 			continue;
 		}
 
-		if (lyric.front() == '[' || lyric.back() == ']') {
-			if (lyric.front() == '[') lyric = lyric.substr(1);
-			if (lyric.back() == ']')  lyric = lyric.substr(0, lyric.size() - 1);
+		if (lyric.front() == '#') {
+			//if (lyric.front() == '[') lyric = lyric.substr(1);
+
+			lyric = seperatePhonemesWithSpace(lyric.substr(1));
 		}
 		else {
 			lyric = getCMUInstance()[lyric];
@@ -339,16 +346,19 @@ mpe::usecs_t framesToUsecs(uint64_t frames) {
 	return 1'000'000 * (frames * FRAME_SIZE) / SAMPLE_RATE;
 }
 
-void DECTalkWavGenerator::initCommand() {
-	m_command.erase();
+void DECTalkWavGenerator::quantizeNotesToFile(std::vector<DECTalkNote>& notes, std::string& filepath) {
 
-	m_command = "[:phoneme on]";
-	m_command += "[:n" + m_name.substr(0, 1) + "]";
-}
+;
+	std::ofstream myfile;
+	myfile.open(filepath + ".txt");
 
 
-void DECTalkWavGenerator::quantizeNotes(std::vector<DECTalkNote> notes) {
-	m_command += "[";
+	myfile << "[:phoneme on]";
+	myfile << "[:n" + m_name.substr(0, 1) + "]";
+
+	//myfile << m_command;
+
+	myfile << "[";
 
 	mpe::usecs_t accumulateiveError = 0;
 	int nPhonemesInClause = 0;
@@ -389,22 +399,24 @@ void DECTalkWavGenerator::quantizeNotes(std::vector<DECTalkNote> notes) {
 
 		accumulateiveError += (out_us - note.duration);
 
-		m_command += note.lyric + "<" + std::to_string(inputMs);
+		myfile << note.lyric + "<" + std::to_string(inputMs);
 		if (note.lyric == "_") {
-			m_command += ">";
+			myfile << ">";
 		}
 		else {
-			m_command += "," + std::to_string(note.pitch) + ">";
+			myfile << "," + std::to_string(note.pitch) + ">";
 		}
 
 		if (addComma) {
-			m_command += "],[";
+			myfile << "],[";
 		}
 
 
 	}
 
-	m_command += "]";
+	myfile << "]";
+
+	myfile.close();
 }
 
 bool DECTalkWavGenerator::generate(std::string filePath, const mpe::PlaybackData& playbackData) {
@@ -413,20 +425,13 @@ bool DECTalkWavGenerator::generate(std::string filePath, const mpe::PlaybackData
 		deleteFile(filePath);
 	}
 
-	initCommand();
-
 	std::vector<DECTalkNote> notes = getNotesFromScore(playbackData);
 	
 	spreadLyrics(notes);
 
 	notes = spreadPhonemes(notes);
 
-	quantizeNotes(notes);
-
-	std::ofstream myfile;
-	myfile.open(filePath + ".txt");
-	myfile << m_command;
-	myfile.close();
+	quantizeNotesToFile(notes, filePath);
 
 	std::filesystem::path path = std::filesystem::current_path() / "dectalk\\say.exe";
 	//std::string path = "dectalk\\say.exe";
@@ -439,7 +444,7 @@ bool DECTalkWavGenerator::generate(std::string filePath, const mpe::PlaybackData
 	notes.shrink_to_fit();
 
 	system(shellCommand.c_str());
-
+	
 	return true;
 }
 
